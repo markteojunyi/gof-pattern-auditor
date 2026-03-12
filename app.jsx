@@ -553,6 +553,24 @@ Output strictly in JSON:
   "summary": ""
 }`;
 
+const PROMPT3 = `You are a senior software architect refactoring code after a failed design pattern validation.
+
+Given:
+1. The original source file
+2. The detected patterns
+3. The validation results (including at least one "Severe" severity finding)
+
+Your job:
+* Propose a refactored version of the file that:
+  - Correctly implements the intended GoF pattern(s), OR
+  - Removes the accidental/misused pattern in favor of a simpler, more maintainable design
+* Preserve external behavior and public APIs as much as possible.
+* Improve separation of concerns and respect architectural layering.
+
+Focus on practical, production-quality refactoring — not academic examples.
+
+Output ONLY the refactored source code for this single file, with no commentary or JSON.`;
+
 function setDot(id, state) {
   const d = document.getElementById(id);
   d.className = 'step-dot';
@@ -573,6 +591,13 @@ function parseJSON(text) {
     }
     return null;
   }
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 function renderAnalyser(data, el) {
@@ -656,7 +681,7 @@ async function callClaude(messages) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model: 'sonnet-4.6',
       max_tokens: 1000,
       messages
     })
@@ -686,7 +711,7 @@ async function runChain() {
 
   try {
     // STEP 1: Analyser
-    label.textContent = 'Step 1/2: Analysing patterns...';
+    label.textContent = 'Step 1/3: Analysing patterns...';
     const analyserMessages = [
       { role: 'user', content: `${PROMPT1}\n\nFile: ${filename}\n\n\`\`\`\n${code}\n\`\`\`` }
     ];
@@ -697,7 +722,7 @@ async function runChain() {
     renderAnalyser(analyserData, analyserEl);
 
     // STEP 2: Validator
-    label.textContent = 'Step 2/2: Validating results...';
+    label.textContent = 'Step 2/3: Validating results...';
     setDot('dot3', 'active2');
     validatorEl.innerHTML = '<div class="placeholder-msg"><span style="color:var(--accent2)">▶</span> Running validator...</div>';
 
@@ -712,6 +737,26 @@ async function runChain() {
 
     setDot('dot3', 'done2'); setDot('dot4', 'done2');
     renderValidator(validatorData, validatorEl);
+
+    // STEP 3: Suggested refactor (only if any severity is Severe)
+    const hasSevere = (validatorData && Array.isArray(validatorData.validation))
+      ? validatorData.validation.some(v => (v.severity || '').toLowerCase() === 'severe')
+      : false;
+
+    if (hasSevere) {
+      label.textContent = 'Step 3/3: Suggesting refactor...';
+      const refactorMessages = [
+        {
+          role: 'user',
+          content: `${PROMPT3}\n\nFile: ${filename}\n\nOriginal source code:\n\`\`\`\n${code}\n\`\`\`\n\nAnalyser (Prompt 1) result:\n${analyserRaw}\n\nValidator (Prompt 2) result:\n${validatorRaw}`
+        }
+      ];
+      const refactorText = await callClaude(refactorMessages);
+      validatorEl.innerHTML += `<div class="summary-box">
+        <div class="slabel">Suggested Refactored Code (Severe)</div>
+        <pre class="stext" style="white-space:pre-wrap; font-size:0.72rem; margin-top:6px;">${escapeHtml(refactorText)}</pre>
+      </div>`;
+    }
 
   } catch (err) {
     analyserEl.innerHTML = `<div class="error-box">Error: ${err.message}</div>`;
