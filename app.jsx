@@ -454,27 +454,27 @@
 <script>
 const PROMPT1 = `You are a senior software architect performing a strict design pattern audit on a production React + Spring Boot codebase. Your task: Determine whether the provided file implements any of the following Gang of Four (GoF) design patterns. Be conservative. Only classify a pattern if its structural intent is clearly present.
 
-══════════════════════════════════
+==================================
 CREATIONAL PATTERNS
-══════════════════════════════════
+==================================
 * Singleton
 * Prototype
 * Builder
 * Factory (Factory Method or Simple Factory)
 * Abstract Factory
 
-══════════════════════════════════
+==================================
 STRUCTURAL PATTERNS
-══════════════════════════════════
+==================================
 * Facade
 * Proxy
 * Bridge
 * Composite
 * Decorator
 
-══════════════════════════════════
+==================================
 BEHAVIORAL PATTERNS
-══════════════════════════════════
+==================================
 * Strategy
 * Iterator
 * Observer
@@ -483,7 +483,7 @@ BEHAVIORAL PATTERNS
 * Memento
 * Command
 
-══════════════════════════════════
+==================================
 Classification Rules:
 1. Only detect a pattern if structural characteristics are clearly implemented.
 2. Naming alone (e.g., "StrategyService") does NOT qualify.
@@ -681,7 +681,7 @@ async function callClaude(messages) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'sonnet-4.6',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1000,
       messages
     })

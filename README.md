@@ -14,13 +14,17 @@ design patterns, validates them, and (for severe issues) proposes a refactored v
 ### Running this app
 This app is a single‑file HTML/JS artifact that talks directly to Anthropic's Messages API.
 
-1. Serve `app.jsx` as a static file (or open it directly in a browser that allows `fetch` calls to `https://api.anthropic.com` with your API key configured, e.g. via browser/plugin or local proxy).
-2. Paste your source code into the left‑hand textarea.
-3. (Optional) Fill in the filename field to improve analysis context.
-4. Click **Run Full Audit** to execute the analyser + validator chain.
-5. If any issue is marked **Severe**, a third step will appear in the Validator panel with a suggested refactored version of the file.
+**Recommended usage (Claude Desktop / Claude Artifacts):**
+1. Open Claude Desktop or `claude.ai`.
+2. Create a new Artifact and paste the contents of `app.jsx` into it.
+3. Let Claude render the UI, then paste your source code into the left‑hand textarea.
+4. (Optional) Fill in the filename field to improve analysis context.
+5. Click **Run Full Audit** to execute the analyser → validator (→ conditional refactor) chain.
 
-> Note: This was originally designed for Claude Desktop/Artifacts; some environments may require you to adapt how the Anthropic API key is provided.
+**Alternative usage (served locally):**
+1. Serve `app.jsx` as a static file from a simple HTTP server.
+2. Open it in a browser that is configured to send requests to `https://api.anthropic.com` with your API key (e.g. via local proxy, extension, or custom environment).
+3. Use the UI exactly as described above.
 
 ### Tech
 - Plain HTML/CSS/JS single‑file app (`app.jsx`)
