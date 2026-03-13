@@ -16,10 +16,11 @@ This app is a single‑file HTML/JS artifact that talks directly to Anthropic's 
 
 **Recommended usage (Claude Desktop / Claude Artifacts):**
 1. Open Claude Desktop or `claude.ai`.
-2. Create a new Artifact and paste the contents of `app.jsx` into it.
+2. Create a new Artifact and paste the contents of `app.jsx` into it, might have to change it to .html
 3. Let Claude render the UI, then paste your source code into the left‑hand textarea.
-4. (Optional) Fill in the filename field to improve analysis context.
+4. Fill in the filename field to improve analysis context.
 5. Click **Run Full Audit** to execute the analyser → validator (→ conditional refactor) chain.
+6. If it doesn't work, ask Claude how to solve the problem
 
 **Alternative usage (served locally):**
 1. Serve `app.jsx` as a static file from a simple HTTP server.
